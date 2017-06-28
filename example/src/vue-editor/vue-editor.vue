@@ -1,7 +1,7 @@
 <template>
   <div class="vue-editor">
     <div class="editor-control">
-      <div class="editor-item">
+      <div class="editor-item" data-info="标签">
         <i class="iconfont icon-magic"></i>
       </div>
     </div>
@@ -52,6 +52,53 @@ export default {
     border-radius: 3px;
     margin: 4px 0 4px 5px;
     background-color: white;
+  }
+
+  .editor-item:after {
+    position: absolute;
+    top: 0;
+    content: attr(data-info);
+    top: 40px;
+    left: 25px;
+    padding: 5px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    line-height: 1.5;
+    font-size: 13px;
+    color: #fff;
+    background: rgba(0,0,0,.8);
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+    visibility: hidden;
+    opacity: .9;
+    letter-spacing: 1px;
+  }
+
+  .editor-item:before {
+    position: absolute;
+    content: "";
+    top: 35px;
+    left: 25px;
+    width: 0;
+    height: 0;
+    margin: 0 0 0 -6px;
+    font-size: 0;
+    color: rgba(0,0,0,.8);
+    border-bottom: 6px solid currentColor;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    visibility: hidden;
+    opacity: .9;
+  }
+
+  .editor-item:hover {
+    color: #333;
+    background-color: #e6e6e6;
+    border-color: #adadad;
+  }
+
+  .editor-item:hover:after, .editor-item:hover:before {
+    visibility: visible;
   }
 
   .editor-item i {
