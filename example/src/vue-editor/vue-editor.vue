@@ -1,7 +1,9 @@
 <template>
   <div class="vue-editor">
     <div class="editor-control">
-
+      <div class="editor-item">
+        <i class="iconfont icon-magic"></i>
+      </div>
     </div>
     <div class="editor-body" contenteditable="true">
       <p><br></p>
@@ -19,6 +21,8 @@ export default {
 </script>
 
 <style lang="css" scoped>
+  @import "//at.alicdn.com/t/font_xfj36ibcszynl8fr.css";
+
   .vue-editor {
     position: relative;
     background-color: #fff;
@@ -28,6 +32,8 @@ export default {
   }
 
   .editor-control {
+    display: flex;
+    flex-flow: row wrap;
     height: 40px;
     color: #333;
     border-bottom: 1px solid transparent;
@@ -35,6 +41,21 @@ export default {
     border-top-right-radius: 3px;
     background-color: #f5f5f5;
     border-color: #ddd;
+  }
+
+  .editor-item {
+    vertical-align: middle;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    padding: 5px 10px;
+    line-height: 20px;
+    border-radius: 3px;
+    margin: 4px 0 4px 5px;
+    background-color: white;
+  }
+
+  .editor-item i {
+    font-size: 18px;
   }
 
   .editor-body {
