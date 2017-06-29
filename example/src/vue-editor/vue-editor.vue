@@ -1,9 +1,14 @@
 <template>
   <div class="vue-editor">
     <div class="editor-control">
-      <div class="editor-item" data-info="标签">
-        <i class="iconfont icon-magic"></i>
-      </div>
+      <Icon
+        v-for="(item, $index) in iconList"
+        :name="item.name"
+        :type="item.type"
+        :icon="item.icon"
+      >
+        <div class="dropmenu" v-if="$index === 0">下拉菜单1</div>
+      </Icon>
     </div>
     <div class="editor-body" contenteditable="true">
       <p><br></p>
@@ -12,16 +17,47 @@
 </template>
 
 <script>
+import Icon from './icon'
 export default {
   data: function () {
     return {
+      iconList: [
+        {
+          // hover名字
+          name: '标签',
+          // 点击事件处理
+          type: 'style',
+          // 图标样式
+          icon: 'icon-magic',
+          // 是否有下拉菜单
+          drop: true
+        },
+        {
+          name: '粗体',
+          type: 'bold',
+          icon: 'icon-cuti'
+        },
+        {
+          name: '下划线',
+          type: 'underline',
+          icon: 'icon-xiahuaxian'
+        },
+        {
+          name: '清除样式',
+          type: 'clear',
+          icon: 'icon-xiangpi'
+        }
+      ]
     }
-  }
+  },
+  components: {
+		Icon
+	}
 }
 </script>
 
 <style lang="css" scoped>
-  @import "//at.alicdn.com/t/font_xfj36ibcszynl8fr.css";
+  @import "//at.alicdn.com/t/font_6xm3sop8xft21emi.css";
 
   .vue-editor {
     position: relative;
@@ -29,6 +65,7 @@ export default {
     border-radius: 4px;
     border: 1px solid #a9a9a9;
     box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   }
 
   .editor-control {
@@ -43,66 +80,24 @@ export default {
     border-color: #ddd;
   }
 
-  .editor-item {
-    vertical-align: middle;
+  .dropmenu {
+    display: none;
+    position: absolute;
+    top: 32px;
+    left: 0;
+    z-index: 1000;
+    min-width: 160px;
+    padding: 5px 0;
+    margin: 2px 0 0;
+    font-size: 14px;
+    text-align: left;
+    list-style: none;
+    background-color: #fff;
+    background-clip: padding-box;
     border: 1px solid #ccc;
-    cursor: pointer;
-    padding: 5px 10px;
-    line-height: 20px;
-    border-radius: 3px;
-    margin: 4px 0 4px 5px;
-    background-color: white;
-  }
-
-  .editor-item:after {
-    position: absolute;
-    top: 0;
-    content: attr(data-info);
-    top: 40px;
-    left: 25px;
-    padding: 5px 8px;
+    border: 1px solid rgba(0, 0, 0, .15);
     border-radius: 4px;
-    white-space: nowrap;
-    line-height: 1.5;
-    font-size: 13px;
-    color: #fff;
-    background: rgba(0,0,0,.8);
-    -webkit-transform: translateX(-50%);
-    transform: translateX(-50%);
-    visibility: hidden;
-    opacity: .9;
-    letter-spacing: 1px;
-  }
-
-  .editor-item:before {
-    position: absolute;
-    content: "";
-    top: 35px;
-    left: 25px;
-    width: 0;
-    height: 0;
-    margin: 0 0 0 -6px;
-    font-size: 0;
-    color: rgba(0,0,0,.8);
-    border-bottom: 6px solid currentColor;
-    border-left: 6px solid transparent;
-    border-right: 6px solid transparent;
-    visibility: hidden;
-    opacity: .9;
-  }
-
-  .editor-item:hover {
-    color: #333;
-    background-color: #e6e6e6;
-    border-color: #adadad;
-  }
-
-  .editor-item:hover:after, .editor-item:hover:before {
-    visibility: visible;
-  }
-
-  .editor-item i {
-    font-size: 18px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
   }
 
   .editor-body {
