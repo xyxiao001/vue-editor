@@ -35,17 +35,22 @@ export default {
         {
           name: '粗体',
           type: 'bold',
-          icon: 'icon-cuti'
+          icon: 'icon-bold'
         },
         {
           name: '下划线',
           type: 'underline',
-          icon: 'icon-xiahuaxian'
+          icon: 'icon-underline'
         },
         {
           name: '清除样式',
           type: 'clear',
           icon: 'icon-xiangpi'
+        },
+        {
+          name: '字体',
+          type: 'fontFamily',
+          icon: 'icon-char'
         }
       ]
     }
@@ -57,7 +62,7 @@ export default {
 </script>
 
 <style lang="css" scoped>
-  @import "//at.alicdn.com/t/font_6xm3sop8xft21emi.css";
+  @import "//at.alicdn.com/t/font_8e1zfc5tlz6ywrk9.css";
 
   .vue-editor {
     position: relative;

@@ -1,7 +1,7 @@
 <template>
   <div class="editor-item">
     <div class="item-icon" :class="icon" :data-info="name" :data-type="type">
-      <i class="iconfont" :class="icon"></i>
+      <i class="iconfont" :class="icon" v-if="icon.length > 0"></i>
     </div>
     <slot></slot>
   </div>
@@ -89,7 +89,7 @@ export default {
     z-index: 9999;
   }
 
-  .editor-item .item-icon:hover {
+  .editor-item:hover {
     color: #333;
     background-color: #e6e6e6;
     border-color: #adadad;
