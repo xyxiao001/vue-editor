@@ -45,6 +45,7 @@
     <div
       class="editor-body"
       contenteditable="true"
+      spellcheck="false"
       ref="editor"
       v-html="html">
     </div>
@@ -57,6 +58,7 @@ export default {
   data: function () {
     return {
       html: '<p><br></p>',
+      selectedRange: '',
       iconList: [
         {
           // hover名字
@@ -115,8 +117,12 @@ export default {
         return val
       })
       this.iconList = arr
-      this.changeStyle(type)
-      console.log(this.getSelect())
+      this.selectedRange = this.getSelect()
+      this.$nextTick(() => {
+        this.restoreSelection()
+        // 修改所选区域的样式
+        this.changeStyle(type)
+      })
     },
 
     // 获取选中
@@ -142,8 +148,27 @@ export default {
         case 'underline':
           document.execCommand('underline', false)
           break
+        case 'clear':
+          document.execCommand('removeFormat', false)
+          break
         default:
           console.log('none')
+      }
+    },
+
+    // 恢复光标位置
+    restoreSelection() {
+      var selection = window.getSelection()
+      if (this.selectedRange) {
+        try {
+          selection.removeAllRanges() /*清空所有Range对象*/
+        } catch (ex) {
+          /*IE*/
+          document.body.createTextRange().select()
+          document.selection.empty()
+        }
+        /*恢复保存的范围*/
+        selection.addRange(this.selectedRange)
       }
     }
   },

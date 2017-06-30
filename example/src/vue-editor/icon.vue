@@ -1,8 +1,8 @@
 <template>
-  <div class="editor-item" :class="{'activity': choose}">
-    <div class="item-icon" :data-info="name" :data-type="type" @click="iconClick($event, type)">
+  <div class="editor-item">
+    <button class="item-icon" :class="{'activity': choose}" :data-info="name" :data-type="type" @click="iconClick($event, type)">
       <i class="iconfont" :class="icon" v-if="icon.length > 0"></i>
-    </div>
+    </button>
     <slot></slot>
   </div>
 </template>
@@ -55,8 +55,20 @@ export default {
   .editor-item .item-icon {
     position: relative;
     display: inline-block;
-    padding: 5px 10px;
+    width: 100%;
+    height: 100%;
+    padding: 2px 10px;
     font-size: 18px;
+    font-weight: normal;
+    white-space: nowrap;
+    vertical-align: middle;
+    touch-action: manipulation;
+    cursor: pointer;
+    user-select: none;
+    background-color: #fff;
+    border: 1px solid white;
+    outline: none;
+    transition: all 0.1s ease-out;
   }
 
   .editor-item .item-icon:after {
@@ -98,17 +110,17 @@ export default {
     z-index: 9999;
   }
 
-  .editor-item:hover, .editor-item.activity{
+  .item-icon:hover, .item-icon.activity{
     color: #333;
     background-color: #e6e6e6;
-    border-color: #adadad;
+    border-color: #e6e6e6;
   }
 
   .editor-item .item-icon:hover:after, .editor-item .item-icon:hover:before {
     visibility: visible;
   }
 
-  .editor-item.activity .dropmenu {
+  .item-icon.activity + .dropmenu {
     display: block;
   }
 </style>
