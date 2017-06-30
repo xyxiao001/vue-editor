@@ -9,7 +9,7 @@
         :choose="item.choose"
         @iconClick="iconClick"
       >
-        <div class="dropmenu" v-if="$index === 0">
+        <div class="dropmenu drop-style" v-if="$index === 0">
           <ul>
             <li>
               <p>正文</p>
@@ -45,6 +45,7 @@
     <div
       class="editor-body"
       contenteditable="true"
+      ref="editor"
       v-html="html">
     </div>
   </div>
@@ -114,6 +115,36 @@ export default {
         return val
       })
       this.iconList = arr
+      this.changeStyle(type)
+      console.log(this.getSelect())
+    },
+
+    // 获取选中
+  getSelect() {
+    if (window.getSelection) {
+        /*主流的浏览器，包括chrome、Mozilla、Safari*/
+        var sel = window.getSelection()
+        if (sel.rangeCount > 0) {
+          return sel.getRangeAt(0)
+        }
+      } else if (document.selection) {
+        /*IE下的处理*/
+        return document.selection.createRange()
+      }
+      return null
+    },
+    // 改变选取的内容
+    changeStyle(type) {
+      switch (type) {
+        case 'bold':
+          document.execCommand('bold', false)
+          break
+        case 'underline':
+          document.execCommand('underline', false)
+          break
+        default:
+          console.log('none')
+      }
     }
   },
   components: {
