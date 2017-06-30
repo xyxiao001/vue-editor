@@ -110,6 +110,7 @@ export default {
   },
   methods: {
     iconClick (event, type) {
+      this.$refs.editor.focus()
       var arr = this.iconList.map((val, index) => {
         if (type === val.type && val.canChoose) {
           val.choose = val.choose ? false : true
