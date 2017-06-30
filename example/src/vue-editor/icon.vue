@@ -1,6 +1,6 @@
 <template>
-  <div class="editor-item">
-    <div class="item-icon" :class="icon" :data-info="name" :data-type="type">
+  <div class="editor-item" :class="{'activity': choose}">
+    <div class="item-icon" :data-info="name" :data-type="type" @click="iconClick($event, type)">
       <i class="iconfont" :class="icon" v-if="icon.length > 0"></i>
     </div>
     <slot></slot>
@@ -25,6 +25,15 @@ export default {
     icon: {
       type: String,
       default: '未定义'
+    },
+    choose: {
+      type: Boolean,
+      default: false
+    }
+  },
+  methods: {
+    iconClick (event, type) {
+      this.$emit('iconClick', event, type)
     }
   }
 }
@@ -89,7 +98,7 @@ export default {
     z-index: 9999;
   }
 
-  .editor-item:hover {
+  .editor-item:hover, .editor-item.activity{
     color: #333;
     background-color: #e6e6e6;
     border-color: #adadad;
@@ -97,5 +106,9 @@ export default {
 
   .editor-item .item-icon:hover:after, .editor-item .item-icon:hover:before {
     visibility: visible;
+  }
+
+  .editor-item.activity .dropmenu {
+    display: block;
   }
 </style>
