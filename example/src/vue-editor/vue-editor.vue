@@ -292,14 +292,13 @@ export default {
   }
 
   .dropmenu ul li {
-    margin-bottom: 8px;
     text-align: left;
     list-style: none;
   }
 
   .dropmenu ul li a {
     display: block;
-    padding: 2px 10px;
+    padding: 5px 10px;
   }
 
   .editor-body {
