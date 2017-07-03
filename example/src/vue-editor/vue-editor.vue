@@ -293,4 +293,12 @@ export default {
     border: 1px solid #ccc;
     border-radius: 4px;
   }
+
+  .editor-body blockquote {
+    margin-bottom: 30px;
+  }
+
+  .editor-body pre {
+    margin-bottom: 10px;
+  }
 </style>
