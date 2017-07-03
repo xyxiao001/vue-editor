@@ -12,31 +12,31 @@
         <div class="dropmenu drop-style" v-if="$index === 0">
           <ul>
             <li>
-              <p>正文</p>
+              <a href="#" @click="iconClick($event, 'p')"><p>正文</p></a>
             </li>
             <li>
-              <pre>code</pre>
+              <a href="#" @click="iconClick($event, 'pre')"><pre>code</pre></a>
             </li>
             <li>
-              <blockquote>引用</blockquote>
+              <a href="#" @click="iconClick($event, 'blockquote')"><blockquote>引用</blockquote></a>
             </li>
             <li>
-              <h1>标题一</h1>
+              <a href="#" @click="iconClick($event, 'h1')"><h1>标题一</h1></a>
             </li>
             <li>
-              <h2>标题二</h2>
+              <a href="#" @click="iconClick($event, 'h2')"><h2>标题二</h2></a>
             </li>
             <li>
-              <h3>标题三 </h3>
+              <a href="#" @click="iconClick($event, 'h3')"><h3>标题三 </h3></a>
             </li>
             <li>
-              <h4>标题四 </h4>
+              <a href="#" @click="iconClick($event, 'h4')"><h4>标题四 </h4></a>
             </li>
             <li>
-              <h5>标题五 </h5>
+              <a href="#" @click="iconClick($event, 'h5')"><h5>标题五 </h5></a>
             </li>
             <li>
-              <h6>标题六</h6>
+              <a href="#" @click="iconClick($event, 'h6')"><h6>标题六</h6></a>
             </li>
           </ul>
         </div>
@@ -110,19 +110,23 @@ export default {
   },
   methods: {
     iconClick (event, type) {
+      event.preventDefault()
       this.$refs.editor.focus()
-      var arr = this.iconList.map((val, index) => {
-        if (type === val.type && val.canChoose) {
-          val.choose = val.choose ? false : true
-        }
-        return val
-      })
-      this.iconList = arr
       this.selectedRange = this.getSelect()
+      this.restoreSelection()
+      // 修改所选区域的样式
+      this.changeStyle(type)
       this.$nextTick(() => {
-        this.restoreSelection()
-        // 修改所选区域的样式
-        this.changeStyle(type)
+        ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'blockquote', 'pre'].forEach((val, index) =>{
+          type = val === type ? 'style' : type
+        })
+        var arr = this.iconList.map((val, index) => {
+          if (type === val.type && val.canChoose) {
+            val.choose = val.choose ? false : true
+          }
+          return val
+        })
+        this.iconList = arr
       })
     },
 
@@ -151,6 +155,17 @@ export default {
           break
         case 'clear':
           document.execCommand('removeFormat', false)
+          break
+        case 'h1':
+        case 'h2':
+        case 'h3':
+        case 'h4':
+        case 'h5':
+        case 'h6':
+        case 'p':
+        case 'pre':
+        case 'blockquote':
+          document.execCommand('formatBlock', false, type)
           break
         default:
           console.log('none')
@@ -182,36 +197,17 @@ export default {
 <style lang="css" scoped>
   @import "//at.alicdn.com/t/font_8e1zfc5tlz6ywrk9.css";
 
-  h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6, p{
+  h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6, p, a{
     font-family: inherit;
     font-weight: 500;
     line-height: 1.1;
     color: inherit;
     margin: 0;
-  }
-
-  pre {
-    display: block;
-    padding: 9.5px;
-    font-size: 13px;
-    line-height: 1.42857143;
-    color: #333;
-    word-break: break-all;
-    word-wrap: break-word;
-    background-color: #f5f5f5;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    text-decoration: none;
   }
 
   code, kbd, pre, samp {
     font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
-  }
-
-  blockquote {
-    padding: 10px 20px;;
-    font-size: 17.5px;
-    border-left: 5px solid #f86466;
-    background: white;
   }
 
   .vue-editor {
@@ -275,5 +271,26 @@ export default {
     font-size: 14px;
     color: #68747f;
 		margin: 0 0 10px;
+  }
+</style>
+<style>
+  .vue-editor blockquote {
+    padding: 10px 20px;;
+    font-size: 17.5px;
+    border-left: 5px solid #f86466;
+    background: white;
+  }
+
+  .vue-editor pre {
+    display: block;
+    padding: 9.5px;
+    font-size: 13px;
+    line-height: 1.42857143;
+    color: #333;
+    word-break: break-all;
+    word-wrap: break-word;
+    background-color: #f5f5f5;
+    border: 1px solid #ccc;
+    border-radius: 4px;
   }
 </style>
