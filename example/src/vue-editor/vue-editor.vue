@@ -90,6 +90,14 @@ export default {
           choose: false
         },
         {
+          name: '斜体',
+          type: 'italic',
+          icon: 'icon-italic',
+          drop: false,
+          canChoose: true,
+          choose: false
+        },
+        {
           name: '清除样式',
           type: 'clear',
           icon: 'icon-xiangpi',
@@ -101,6 +109,22 @@ export default {
           name: '字体颜色',
           type: 'fontFamily',
           icon: 'icon-char',
+          drop: false,
+          canChoose: true,
+          choose: false
+        },
+        {
+          name: '无序列表',
+          type: 'unorderedlist',
+          icon: 'icon-unorderedlist',
+          drop: false,
+          canChoose: true,
+          choose: false
+        },
+        {
+          name: '有序列表',
+          type: 'orderedlist',
+          icon: 'icon-orderedlist',
           drop: false,
           canChoose: true,
           choose: false
@@ -126,6 +150,13 @@ export default {
           }
           return val
         })
+
+        if (type === 'clear') {
+          var arr = this.iconList.map((val, index) => {
+            val.choose = false
+            return val
+          })
+        }
         this.iconList = arr
       })
     },
@@ -153,8 +184,17 @@ export default {
         case 'underline':
           document.execCommand('underline', false)
           break
+        case 'italic':
+          document.execCommand('italic', false)
+          break
         case 'clear':
           document.execCommand('removeFormat', false)
+          break
+        case 'unorderedlist':
+          document.execCommand('insertUnorderedList', false)
+          break
+        case 'orderedlist':
+          document.execCommand('insertorderedList', false)
           break
         case 'h1':
         case 'h2':
@@ -300,5 +340,14 @@ export default {
 
   .editor-body pre {
     margin-bottom: 10px;
+  }
+
+  .editor-body ul {
+    padding-left: 40px;
+    list-style-type: disc;
+  }
+
+  .editor-body ol {
+    padding-left: 40px;
   }
 </style>
