@@ -173,6 +173,14 @@ export default {
           drop: true,
           canChoose: true,
           choose: false
+        },
+        {
+          name: '图片',
+          type: 'image',
+          icon: 'icon-image',
+          drop: true,
+          canChoose: false,
+          choose: false
         }
       ]
     }
@@ -261,9 +269,17 @@ export default {
         case 'justifyRight':
           document.execCommand(type, false)
           break
+        case 'image':
+          this.chooseImage()
+          break
         default:
           console.log('none')
       }
+    },
+
+    //上传图片
+    chooseImage () {
+      console.log('img')
     },
 
     // 恢复光标位置
