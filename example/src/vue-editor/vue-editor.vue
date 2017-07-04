@@ -3,40 +3,69 @@
     <div class="editor-control">
       <Icon
         v-for="(item, $index) in iconList"
+        key="item.type"
         :name="item.name"
         :type="item.type"
         :icon="item.icon"
         :choose="item.choose"
         @iconClick="iconClick"
       >
-        <div class="dropmenu drop-style" v-if="$index === 0">
+        <div class="dropmenu drop-style" v-if="item.type === 'style'">
           <ul>
             <li>
-              <a href="#" @click="iconClick($event, 'p')"><p>正文</p></a>
+              <a href="#" @click="iconClick($event, 'p', 'style')"><p>正文</p></a>
             </li>
             <li>
-              <a href="#" @click="iconClick($event, 'pre')"><pre>code</pre></a>
+              <a href="#" @click="iconClick($event, 'pre', 'style')"><pre>code</pre></a>
             </li>
             <li>
-              <a href="#" @click="iconClick($event, 'blockquote')"><blockquote>引用</blockquote></a>
+              <a href="#" @click="iconClick($event, 'blockquote', 'style')"><blockquote>引用</blockquote></a>
             </li>
             <li>
-              <a href="#" @click="iconClick($event, 'h1')"><h1>标题一</h1></a>
+              <a href="#" @click="iconClick($event, 'h1', 'style')"><h1>标题一</h1></a>
             </li>
             <li>
-              <a href="#" @click="iconClick($event, 'h2')"><h2>标题二</h2></a>
+              <a href="#" @click="iconClick($event, 'h2', 'style')"><h2>标题二</h2></a>
             </li>
             <li>
-              <a href="#" @click="iconClick($event, 'h3')"><h3>标题三 </h3></a>
+              <a href="#" @click="iconClick($event, 'h3', 'style')"><h3>标题三 </h3></a>
             </li>
             <li>
-              <a href="#" @click="iconClick($event, 'h4')"><h4>标题四 </h4></a>
+              <a href="#" @click="iconClick($event, 'h4', 'style')"><h4>标题四 </h4></a>
             </li>
             <li>
-              <a href="#" @click="iconClick($event, 'h5')"><h5>标题五 </h5></a>
+              <a href="#" @click="iconClick($event, 'h5', 'style')"><h5>标题五 </h5></a>
             </li>
             <li>
-              <a href="#" @click="iconClick($event, 'h6')"><h6>标题六</h6></a>
+              <a href="#" @click="iconClick($event, 'h6', 'style')"><h6>标题六</h6></a>
+            </li>
+          </ul>
+        </div>
+        <div class="dropmenu drop-align" v-if="item.type === 'alignjustify'">
+          <ul>
+            <li>
+              <a href="#" @click="iconClick($event, 'justifyCenter', 'alignjustify')">
+                <i class="iconfont icon-aligncenter"></i>
+                <span>居中</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" @click="iconClick($event, 'justifyLeft', 'alignjustify')">
+                <i class="iconfont icon-alignleft"></i>
+                <span>左对齐</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" @click="iconClick($event, 'justifyRight', 'alignjustify')">
+                <i class="iconfont icon-alignright"></i>
+                <span>右对齐</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" @click="iconClick($event, 'justifyFull', 'alignjustify')">
+                <i class="iconfont icon-alignjustify"></i>
+                <span>默认对齐</span>
+              </a>
             </li>
           </ul>
         </div>
@@ -82,6 +111,14 @@ export default {
           choose: false
         },
         {
+          name: '斜体',
+          type: 'italic',
+          icon: 'icon-italic',
+          drop: false,
+          canChoose: true,
+          choose: false
+        },
+        {
           name: '下划线',
           type: 'underline',
           icon: 'icon-underline',
@@ -90,9 +127,9 @@ export default {
           choose: false
         },
         {
-          name: '斜体',
-          type: 'italic',
-          icon: 'icon-italic',
+          name: '删除线',
+          type: 'strike',
+          icon: 'icon-strike',
           drop: false,
           canChoose: true,
           choose: false
@@ -128,12 +165,20 @@ export default {
           drop: false,
           canChoose: true,
           choose: false
+        },
+        {
+          name: '对齐方式',
+          type: 'alignjustify',
+          icon: 'icon-alignjustify',
+          drop: true,
+          canChoose: true,
+          choose: false
         }
       ]
     }
   },
   methods: {
-    iconClick (event, type) {
+    iconClick (event, type, dropType) {
       event.preventDefault()
       this.$refs.editor.focus()
       this.selectedRange = this.getSelect()
@@ -141,9 +186,9 @@ export default {
       // 修改所选区域的样式
       this.changeStyle(type)
       this.$nextTick(() => {
-        ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'blockquote', 'pre'].forEach((val, index) =>{
-          type = val === type ? 'style' : type
-        })
+        if (dropType) {
+          type = dropType
+        }
         var arr = this.iconList.map((val, index) => {
           if (type === val.type && val.canChoose) {
             val.choose = val.choose ? false : true
@@ -184,6 +229,9 @@ export default {
         case 'underline':
           document.execCommand('underline', false)
           break
+        case 'strike':
+          document.execCommand('strikeThrough', false)
+          break
         case 'italic':
           document.execCommand('italic', false)
           break
@@ -206,6 +254,12 @@ export default {
         case 'pre':
         case 'blockquote':
           document.execCommand('formatBlock', false, type)
+          break
+        case 'justifyCenter':
+        case 'justifyFull':
+        case 'justifyLeft':
+        case 'justifyRight':
+          document.execCommand(type, false)
           break
         default:
           console.log('none')
@@ -262,7 +316,7 @@ export default {
   .editor-control {
     display: flex;
     flex-flow: row wrap;
-    height: 40px;
+    min-height: 40px;
     color: #333;
     border-bottom: 1px solid transparent;
     border-top-left-radius: 3px;
@@ -299,6 +353,10 @@ export default {
   .dropmenu ul li a {
     display: block;
     padding: 5px 10px;
+  }
+
+  .drop-align {
+    min-width: 100px;
   }
 
   .editor-body {
