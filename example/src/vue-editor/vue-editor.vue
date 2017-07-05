@@ -197,7 +197,8 @@ export default {
         if (dropType) {
           type = dropType
         }
-        var arr = this.iconList.map((val, index) => {
+        var arr = JSON.parse(JSON.stringify(this.iconList))
+        arr = arr.map((val, index) => {
           if (type === val.type && val.canChoose) {
             val.choose = val.choose ? false : true
           }
@@ -205,7 +206,7 @@ export default {
         })
 
         if (type === 'clear') {
-          var arr = this.iconList.map((val, index) => {
+          arr = arr.map((val, index) => {
             val.choose = false
             return val
           })
