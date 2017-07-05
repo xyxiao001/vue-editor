@@ -189,7 +189,7 @@ export default {
     iconClick (event, type, dropType) {
       event.preventDefault()
       this.$refs.editor.focus()
-      this.selectedRange = this.getSelect()
+      // 恢复光标
       this.restoreSelection()
       // 修改所选区域的样式
       this.changeStyle(type)
