@@ -206,6 +206,10 @@ export default {
         })
 
         if (type === 'clear') {
+          var a = this.getSelect()
+          if (a.startOffset === a.endOffset) {
+            return false
+          }
           arr = arr.map((val, index) => {
             val.choose = false
             return val
