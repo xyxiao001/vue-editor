@@ -76,6 +76,8 @@
       contenteditable="true"
       spellcheck="false"
       ref="editor"
+      @keyup="changeEditor($event, 'mouse')"
+      @mouseup="changeEditor($event, 'key')"
       v-html="html">
     </div>
   </div>
@@ -208,7 +210,8 @@ export default {
         if (type === 'clear') {
           var a = this.getSelect()
           if (a.startOffset === a.endOffset) {
-            return false
+            document.execCommand('insertHTML', false, '&nbsp')
+            // return false
           }
           arr = arr.map((val, index) => {
             val.choose = false
@@ -220,8 +223,8 @@ export default {
     },
 
     // 获取选中
-  getSelect() {
-    if (window.getSelection) {
+    getSelect() {
+      if (window.getSelection) {
         /*主流的浏览器，包括chrome、Mozilla、Safari*/
         var sel = window.getSelection()
         if (sel.rangeCount > 0) {
@@ -285,6 +288,11 @@ export default {
     //上传图片
     chooseImage () {
       console.log('img')
+    },
+
+    // 编辑器的鼠标键盘事件
+    changeEditor (e, type) {
+      // console.log(e, type)
     },
 
     // 恢复光标位置
