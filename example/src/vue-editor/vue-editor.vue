@@ -203,6 +203,10 @@ export default {
         arr = arr.map((val, index) => {
           if (type === val.type && val.canChoose) {
             val.choose = val.choose ? false : true
+          } else {
+            if (val.drop) {
+              val.choose = false
+            }
           }
           return val
         })
