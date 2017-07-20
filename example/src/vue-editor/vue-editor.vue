@@ -69,6 +69,20 @@
             </li>
           </ul>
         </div>
+        <div class="dropmenu drop-image" v-if="item.type === 'image'">
+          <ul>
+            <li>
+              <a href="#" @click="iconClick($event, 'onlineImg', 'image')">
+                <span>在线链接</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" @click="iconClick($event, 'localImg', 'image')">
+                <span>本地图片</span>
+              </a>
+            </li>
+          </ul>
+        </div>
       </Icon>
     </div>
     <div
@@ -181,7 +195,7 @@ export default {
           type: 'image',
           icon: 'icon-image',
           drop: true,
-          canChoose: false,
+          canChoose: true,
           choose: false
         }
       ]
@@ -264,6 +278,9 @@ export default {
         case 'orderedlist':
           document.execCommand('insertorderedList', false)
           break
+        // 本地图片
+        case 'localImg':
+          console.log(1)
         case 'h1':
         case 'h2':
         case 'h3':
