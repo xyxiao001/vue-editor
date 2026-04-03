@@ -955,7 +955,7 @@ defineExpose({
   position: absolute;
   content: attr(data-tooltip);
   left: 50%;
-  bottom: calc(100% + 8px);
+  top: calc(100% + 8px);
   transform: translateX(-50%);
   white-space: nowrap;
   font-size: 12px;
@@ -972,10 +972,10 @@ defineExpose({
   position: absolute;
   content: "";
   left: 50%;
-  bottom: calc(100% + 2px);
+  top: calc(100% + 2px);
   transform: translateX(-50%);
   border: 5px solid transparent;
-  border-top-color: rgba(17, 24, 39, 0.92);
+  border-bottom-color: rgba(17, 24, 39, 0.92);
   pointer-events: none;
   z-index: 20;
 }
