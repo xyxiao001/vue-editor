@@ -6,3 +6,4 @@ npm-debug.log
 dist/
 docs/.vitepress/cache/
 docs/.vitepress/dist/
+.codex/
