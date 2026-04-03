@@ -26,6 +26,7 @@
             class="toolbar-btn"
             :class="{ active: isButtonActive(item) }"
             :title="t(item)"
+            :data-tooltip="t(item)"
             :disabled="isButtonDisabled(item)"
             @click="handleToolbarAction(item)"
           >
@@ -50,6 +51,65 @@
       <button type="button" class="link-btn" @click="closeLinkEditor">{{ t("cancel") }}</button>
     </div>
 
+    <div v-if="showImageEditor" class="image-editor">
+      <div class="image-editor-row">
+        <span class="image-editor-label">{{ t("imageWidth") }}</span>
+        <select v-model="imageWidthPreset" class="image-select" @change="applyImageWidthPreset">
+          <option value="25%">25%</option>
+          <option value="40%">40%</option>
+          <option value="60%">60%</option>
+          <option value="80%">80%</option>
+          <option value="100%">100%</option>
+          <option value="custom">{{ t("custom") }}</option>
+        </select>
+        <input
+          v-model="imageCustomWidth"
+          class="image-input"
+          type="text"
+          placeholder="80% / 360px"
+          @keydown.enter.prevent="applyImageWidth"
+        />
+        <button type="button" class="link-btn primary" @click="applyImageWidth">{{ t("apply") }}</button>
+      </div>
+
+      <div class="image-editor-row">
+        <span class="image-editor-label">{{ t("imageFloat") }}</span>
+        <button
+          type="button"
+          class="image-float-btn"
+          :class="{ active: imageFloat === 'none' }"
+          @click="setImageFloat('none')"
+        >
+          {{ t("imageFloatNone") }}
+        </button>
+        <button
+          type="button"
+          class="image-float-btn"
+          :class="{ active: imageFloat === 'left' }"
+          @click="setImageFloat('left')"
+        >
+          {{ t("imageFloatLeft") }}
+        </button>
+        <button
+          type="button"
+          class="image-float-btn"
+          :class="{ active: imageFloat === 'right' }"
+          @click="setImageFloat('right')"
+        >
+          {{ t("imageFloatRight") }}
+        </button>
+        <button
+          type="button"
+          class="image-float-btn"
+          :class="{ active: imageFloat === 'center' }"
+          @click="setImageFloat('center')"
+        >
+          {{ t("imageFloatCenter") }}
+        </button>
+        <button type="button" class="link-btn" @click="removeCurrentImage">{{ t("removeImage") }}</button>
+      </div>
+    </div>
+
     <editor-content class="editor-body" :style="{ minHeight: normalizedMinHeight }" :editor="editor" />
 
     <input
@@ -64,6 +124,7 @@
 
 <script setup>
 import { computed, onBeforeUnmount, ref, watch } from "vue";
+import { mergeAttributes } from "@tiptap/core";
 import DOMPurify from "dompurify";
 import { EditorContent, useEditor } from "@tiptap/vue-3";
 import StarterKit from "@tiptap/starter-kit";
@@ -73,6 +134,81 @@ import Link from "@tiptap/extension-link";
 import Placeholder from "@tiptap/extension-placeholder";
 import TextAlign from "@tiptap/extension-text-align";
 import Underline from "@tiptap/extension-underline";
+
+const IMAGE_WIDTH_PRESETS = ["25%", "40%", "60%", "80%", "100%"];
+const IMAGE_FLOAT_VALUES = new Set(["none", "left", "right", "center"]);
+
+const IMAGE_FLOAT_STYLES = {
+  none: "float: none; display: block; margin: 10px 0;",
+  left: "float: left; display: block; margin: 8px 16px 12px 0;",
+  right: "float: right; display: block; margin: 8px 0 12px 16px;",
+  center: "float: none; display: block; margin: 10px auto;",
+};
+
+function normalizeImageFloat(value) {
+  return IMAGE_FLOAT_VALUES.has(value) ? value : "none";
+}
+
+function normalizeImageWidthValue(value) {
+  if (typeof value !== "string" && typeof value !== "number") {
+    return "100%";
+  }
+
+  const normalized = String(value).trim();
+  if (!normalized) {
+    return "100%";
+  }
+
+  if (/^\d+(\.\d+)?%$/.test(normalized)) {
+    return normalized;
+  }
+
+  if (/^\d+(\.\d+)?px$/.test(normalized)) {
+    return normalized;
+  }
+
+  if (/^\d+(\.\d+)?$/.test(normalized)) {
+    return `${normalized}px`;
+  }
+
+  return "100%";
+}
+
+const RichImage = Image.extend({
+  addAttributes() {
+    return {
+      ...this.parent?.(),
+      width: {
+        default: "100%",
+        parseHTML: (element) =>
+          normalizeImageWidthValue(
+            element.getAttribute("data-width") || element.style.width || element.getAttribute("width") || "100%"
+          ),
+        renderHTML: (attributes) => {
+          const width = normalizeImageWidthValue(attributes.width);
+          return {
+            "data-width": width,
+            style: `width: ${width}; max-width: 100%;`,
+          };
+        },
+      },
+      float: {
+        default: "none",
+        parseHTML: (element) => normalizeImageFloat(element.getAttribute("data-float") || "none"),
+        renderHTML: (attributes) => {
+          const float = normalizeImageFloat(attributes.float);
+          return {
+            "data-float": float,
+            style: IMAGE_FLOAT_STYLES[float],
+          };
+        },
+      },
+    };
+  },
+  renderHTML({ HTMLAttributes }) {
+    return ["img", mergeAttributes(this.options.HTMLAttributes, HTMLAttributes)];
+  },
+});
 
 const DEFAULT_TOOLBAR = [
   ["blockType"],
@@ -131,6 +267,14 @@ const LOCALES = {
     undo: "撤销",
     redo: "重做",
     linkPlaceholder: "请输入链接地址",
+    imageWidth: "图片尺寸",
+    imageFloat: "图片位置",
+    imageFloatNone: "默认",
+    imageFloatLeft: "左浮动",
+    imageFloatRight: "右浮动",
+    imageFloatCenter: "居中",
+    removeImage: "删除图片",
+    custom: "自定义",
     apply: "应用",
     remove: "移除",
     cancel: "取消",
@@ -161,6 +305,14 @@ const LOCALES = {
     undo: "Undo",
     redo: "Redo",
     linkPlaceholder: "Paste link URL",
+    imageWidth: "Image size",
+    imageFloat: "Image position",
+    imageFloatNone: "Normal",
+    imageFloatLeft: "Float left",
+    imageFloatRight: "Float right",
+    imageFloatCenter: "Center",
+    removeImage: "Delete image",
+    custom: "Custom",
     apply: "Apply",
     remove: "Remove",
     cancel: "Cancel",
@@ -240,6 +392,10 @@ const emit = defineEmits([
 const fileInputRef = ref(null);
 const showLinkEditor = ref(false);
 const linkUrl = ref("");
+const showImageEditor = ref(false);
+const imageWidthPreset = ref("100%");
+const imageCustomWidth = ref("100%");
+const imageFloat = ref("none");
 
 const messages = computed(() => {
   const preset = LOCALES[props.locale] || LOCALES["zh-CN"];
@@ -306,7 +462,7 @@ const editor = useEditor({
     }),
     Underline,
     Highlight,
-    Image.configure({
+    RichImage.configure({
       allowBase64: true,
     }),
     Link.configure({
@@ -338,6 +494,12 @@ const editor = useEditor({
   },
   onBlur: ({ event }) => {
     emit("blur", event);
+  },
+  onSelectionUpdate: ({ editor: tiptapEditor }) => {
+    syncImageEditorState(tiptapEditor);
+  },
+  onCreate: ({ editor: tiptapEditor }) => {
+    syncImageEditorState(tiptapEditor);
   },
 });
 
@@ -514,6 +676,64 @@ function iconOf(item) {
   return iconMap[item] || t(item);
 }
 
+function syncImageEditorState(tiptapEditor) {
+  if (!tiptapEditor || !tiptapEditor.isActive("image")) {
+    showImageEditor.value = false;
+    return;
+  }
+
+  const attrs = tiptapEditor.getAttributes("image") || {};
+  const width = normalizeImageWidthValue(attrs.width || "100%");
+  const float = normalizeImageFloat(attrs.float || "none");
+
+  showImageEditor.value = true;
+  imageCustomWidth.value = width;
+  imageWidthPreset.value = IMAGE_WIDTH_PRESETS.includes(width) ? width : "custom";
+  imageFloat.value = float;
+}
+
+function applyImageAttrs(attrs) {
+  const tiptapEditor = editor.value;
+  if (!tiptapEditor) {
+    return;
+  }
+
+  tiptapEditor.chain().focus().updateAttributes("image", attrs).run();
+  syncImageEditorState(tiptapEditor);
+}
+
+function applyImageWidthPreset() {
+  if (imageWidthPreset.value === "custom") {
+    return;
+  }
+
+  imageCustomWidth.value = imageWidthPreset.value;
+  applyImageAttrs({ width: imageWidthPreset.value });
+}
+
+function applyImageWidth() {
+  const width = normalizeImageWidthValue(imageCustomWidth.value);
+  imageCustomWidth.value = width;
+  imageWidthPreset.value = IMAGE_WIDTH_PRESETS.includes(width) ? width : "custom";
+  applyImageAttrs({ width });
+}
+
+function setImageFloat(float) {
+  const normalized = normalizeImageFloat(float);
+  imageFloat.value = normalized;
+  applyImageAttrs({ float: normalized });
+}
+
+function removeCurrentImage() {
+  const tiptapEditor = editor.value;
+  if (!tiptapEditor || !tiptapEditor.isActive("image")) {
+    return;
+  }
+
+  tiptapEditor.chain().focus().deleteSelection().run();
+  syncImageEditorState(tiptapEditor);
+}
+
 function isButtonActive(item) {
   const tiptapEditor = editor.value;
   if (!tiptapEditor) {
@@ -648,7 +868,8 @@ async function onFileChange(event) {
       throw new Error("uploadImage must return a non-empty string URL");
     }
 
-    tiptapEditor.chain().focus().setImage({ src: src.trim() }).run();
+    tiptapEditor.chain().focus().setImage({ src: src.trim(), width: "100%", float: "none" }).run();
+    syncImageEditorState(tiptapEditor);
   } catch (error) {
     emit("image-upload-error", error);
   }
@@ -726,6 +947,39 @@ defineExpose({
   letter-spacing: 0.2px;
 }
 
+.toolbar-btn[data-tooltip] {
+  position: relative;
+}
+
+.toolbar-btn[data-tooltip]:hover::after {
+  position: absolute;
+  content: attr(data-tooltip);
+  left: 50%;
+  bottom: calc(100% + 8px);
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: 12px;
+  line-height: 1;
+  padding: 7px 8px;
+  color: #ffffff;
+  background: rgba(17, 24, 39, 0.92);
+  border-radius: 5px;
+  pointer-events: none;
+  z-index: 20;
+}
+
+.toolbar-btn[data-tooltip]:hover::before {
+  position: absolute;
+  content: "";
+  left: 50%;
+  bottom: calc(100% + 2px);
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: rgba(17, 24, 39, 0.92);
+  pointer-events: none;
+  z-index: 20;
+}
+
 .toolbar-btn:hover,
 .toolbar-select:hover,
 .link-btn:hover {
@@ -771,6 +1025,48 @@ defineExpose({
   border-color: #2563eb;
   background: #2563eb;
   color: #ffffff;
+}
+
+.image-editor {
+  display: grid;
+  gap: 8px;
+  padding: 10px;
+  border-bottom: 1px solid #ebeef5;
+  background: #f8fafc;
+}
+
+.image-editor-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.image-editor-label {
+  font-size: 12px;
+  color: #4b5563;
+  min-width: 62px;
+}
+
+.image-select,
+.image-input,
+.image-float-btn {
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #1f2937;
+  font-size: 12px;
+  padding: 7px 9px;
+}
+
+.image-input {
+  min-width: 110px;
+}
+
+.image-float-btn.active {
+  border-color: #2563eb;
+  background: #eff6ff;
+  color: #1d4ed8;
 }
 
 .editor-body {
@@ -849,6 +1145,22 @@ defineExpose({
   max-width: 100%;
   border-radius: 6px;
   display: block;
+  margin: 10px 0;
+}
+
+:deep(.ProseMirror img[data-float="left"]) {
+  float: left;
+  margin: 8px 16px 12px 0;
+}
+
+:deep(.ProseMirror img[data-float="right"]) {
+  float: right;
+  margin: 8px 0 12px 16px;
+}
+
+:deep(.ProseMirror img[data-float="center"]) {
+  float: none;
+  margin: 10px auto;
 }
 
 .sr-only {
