@@ -3,3 +3,6 @@ npm-debug.log
 .DS_Store
 .idea/
 .vscode/
+dist/
+docs/.vitepress/cache/
+docs/.vitepress/dist/

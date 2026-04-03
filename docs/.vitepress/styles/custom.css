@@ -1,0 +1,151 @@
+:root {
+  --editor-preview-border: #e5e7eb;
+  --vp-layout-max-width: 1920px;
+}
+
+.VPDoc .container {
+  max-width: 1820px !important;
+}
+
+.VPDoc.has-aside .content-container,
+.VPDoc:not(.has-aside) .content-container {
+  max-width: 1480px !important;
+}
+
+@media (min-width: 1280px) {
+  .VPDoc.has-sidebar .content {
+    min-width: 920px !important;
+  }
+}
+
+.editor-doc-shell {
+  border: 1px solid var(--editor-preview-border);
+  border-radius: 12px;
+  padding: 16px;
+  background: linear-gradient(180deg, #ffffff, #f8fafc);
+}
+
+.editor-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.editor-controls label {
+  font-size: 13px;
+  color: #374151;
+}
+
+.editor-controls select,
+.editor-controls button {
+  border: 1px solid #d1d5db;
+  background: #fff;
+  border-radius: 6px;
+  padding: 6px 10px;
+}
+
+.editor-workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1.8fr) minmax(320px, 1fr);
+  gap: 14px;
+}
+
+.editor-pane,
+.preview-pane {
+  border: 1px solid var(--editor-preview-border);
+  border-radius: 10px;
+  padding: 12px;
+  background: #fff;
+}
+
+.editor-pane h3,
+.preview-pane h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.preview-tabs {
+  display: inline-flex;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.preview-tabs button {
+  border: none;
+  background: #fff;
+  font-size: 12px;
+  padding: 7px 10px;
+  color: #374151;
+}
+
+.preview-tabs button + button {
+  border-left: 1px solid #d1d5db;
+}
+
+.preview-tabs button.active {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.editor-output,
+.rendered-output {
+  min-height: 460px;
+  max-height: 460px;
+  overflow: auto;
+  border-radius: 8px;
+  border: 1px solid var(--editor-preview-border);
+  margin: 0;
+}
+
+.editor-output {
+  font-size: 12px;
+  line-height: 1.55;
+  padding: 12px;
+  background: #0f172a;
+  color: #e5e7eb;
+  white-space: pre-wrap;
+}
+
+.rendered-output {
+  padding: 14px;
+  background: #fcfcfd;
+  color: #111827;
+}
+
+.rendered-output :is(p, h1, h2, h3, blockquote, ul, ol, pre) {
+  margin: 0 0 12px;
+}
+
+.rendered-output blockquote {
+  border-left: 4px solid #f97316;
+  padding-left: 10px;
+  color: #374151;
+}
+
+.rendered-output img {
+  max-width: 100%;
+  border-radius: 6px;
+}
+
+@media (max-width: 1100px) {
+  .editor-workspace {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .editor-output,
+  .rendered-output {
+    min-height: 300px;
+    max-height: 360px;
+  }
+}

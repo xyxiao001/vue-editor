@@ -1,0 +1,5 @@
+{
+  "installCommand": "npm ci --registry=https://registry.npmjs.org",
+  "buildCommand": "npm run docs:build",
+  "outputDirectory": "docs/.vitepress/dist"
+}

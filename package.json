@@ -1,15 +1,29 @@
 {
-  "name": "vue-editor-component",
-  "version": "0.0.1",
-  "description": "A simple and nice editor",
+  "name": "vue-editor-prose-kit",
+  "version": "0.1.0",
+  "description": "A simple and nice rich text editor component for Vue 3",
   "keywords": [
     "vue",
     "editor",
+    "rich-text-editor",
     "vue-editor",
     "vue-component",
-    "vue-editor-component"
+    "vue-editor-prose-kit"
   ],
-  "main": "./dist/index.js",
+  "main": "./dist/vue-editor-prose-kit.umd.cjs",
+  "module": "./dist/vue-editor-prose-kit.js",
+  "exports": {
+    ".": {
+      "import": "./dist/vue-editor-prose-kit.js",
+      "require": "./dist/vue-editor-prose-kit.umd.cjs"
+    },
+    "./style.css": "./dist/vue-editor-prose-kit.css"
+  },
+  "files": [
+    "dist",
+    "lib",
+    "src"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/xyxiao001/vue-editor.git"
@@ -21,27 +35,44 @@
   },
   "homepage": "https://github.com/xyxiao001/vue-editor#readme",
   "scripts": {
-    "build": "rm -rf ./dist && webpack --colors --hide-modules"
+    "clean": "rimraf dist",
+    "build": "npm run clean && vite build",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs",
+    "release:check": "npm run build && npm run docs:build && npm publish --dry-run --registry=https://registry.npmjs.org",
+    "release:npm": "npm publish --access public --registry=https://registry.npmjs.org",
+    "vercel:build": "npm run docs:build",
+    "vercel:deploy": "npx vercel --yes",
+    "vercel:deploy:prod": "npx vercel --prod --yes",
+    "prepublishOnly": "npm run build"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "peerDependencies": {
+    "vue": "^3.5.0"
   },
   "devDependencies": {
-    "babel-core": "^6.24.0",
-    "babel-loader": "^6.4.1",
-    "babel-plugin-transform-runtime": "^6.23.0",
-    "babel-preset-es2015": "^6.24.0",
-    "babel-preset-stage-2": "^6.22.0",
-    "babel-runtime": "^6.23.0",
-    "css-loader": "^0.23.1",
-    "style-loader": "^0.15.0",
-    "vue": "^2.3.3",
-    "vue-html-loader": "^1.2.4",
-    "vue-loader": "^11.1.4",
-    "vue-style-loader": "^2.0.4",
-    "vue-template-compiler": "^2.2.4",
-    "webpack": "^2.2.1"
+    "@vitejs/plugin-vue": "^6.0.5",
+    "rimraf": "^6.1.3",
+    "vite": "^8.0.3",
+    "vitepress": "^1.6.4",
+    "vue": "^3.5.31"
   },
-  "browserify": {
-    "transform": [
-      "vueify"
-    ]
+  "dependencies": {
+    "@tiptap/extension-highlight": "^3.22.1",
+    "@tiptap/extension-image": "^3.22.1",
+    "@tiptap/extension-link": "^3.22.1",
+    "@tiptap/extension-placeholder": "^3.22.1",
+    "@tiptap/extension-text-align": "^3.22.1",
+    "@tiptap/extension-underline": "^3.22.1",
+    "@tiptap/starter-kit": "^3.22.1",
+    "@tiptap/vue-3": "^3.22.1",
+    "dompurify": "^3.3.3"
   }
 }
