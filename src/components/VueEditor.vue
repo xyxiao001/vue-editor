@@ -125,6 +125,7 @@
 <script setup>
 import { computed, onBeforeUnmount, ref, watch } from "vue";
 import { mergeAttributes } from "@tiptap/core";
+import { NodeSelection } from "@tiptap/pm/state";
 import DOMPurify from "dompurify";
 import { EditorContent, useEditor } from "@tiptap/vue-3";
 import StarterKit from "@tiptap/starter-kit";
@@ -396,6 +397,7 @@ const showImageEditor = ref(false);
 const imageWidthPreset = ref("100%");
 const imageCustomWidth = ref("100%");
 const imageFloat = ref("none");
+const currentImagePos = ref(null);
 
 const messages = computed(() => {
   const preset = LOCALES[props.locale] || LOCALES["zh-CN"];
@@ -676,13 +678,39 @@ function iconOf(item) {
   return iconMap[item] || t(item);
 }
 
+function getSelectedImagePosition(tiptapEditor) {
+  if (!tiptapEditor) {
+    return null;
+  }
+
+  const { selection, doc } = tiptapEditor.state;
+
+  if (selection instanceof NodeSelection && selection.node?.type?.name === "image") {
+    return selection.from;
+  }
+
+  let foundPos = null;
+  doc.nodesBetween(selection.from, selection.to, (node, pos) => {
+    if (node.type.name === "image") {
+      foundPos = pos;
+      return false;
+    }
+    return undefined;
+  });
+
+  return foundPos;
+}
+
 function syncImageEditorState(tiptapEditor) {
-  if (!tiptapEditor || !tiptapEditor.isActive("image")) {
+  const imagePos = getSelectedImagePosition(tiptapEditor);
+  if (imagePos === null) {
+    currentImagePos.value = null;
     showImageEditor.value = false;
     return;
   }
 
-  const attrs = tiptapEditor.getAttributes("image") || {};
+  currentImagePos.value = imagePos;
+  const attrs = tiptapEditor.state.doc.nodeAt(imagePos)?.attrs || {};
   const width = normalizeImageWidthValue(attrs.width || "100%");
   const float = normalizeImageFloat(attrs.float || "none");
 
@@ -694,11 +722,16 @@ function syncImageEditorState(tiptapEditor) {
 
 function applyImageAttrs(attrs) {
   const tiptapEditor = editor.value;
-  if (!tiptapEditor) {
+  if (!tiptapEditor || currentImagePos.value === null) {
     return;
   }
 
-  tiptapEditor.chain().focus().updateAttributes("image", attrs).run();
+  tiptapEditor
+    .chain()
+    .focus()
+    .setNodeSelection(currentImagePos.value)
+    .updateAttributes("image", attrs)
+    .run();
   syncImageEditorState(tiptapEditor);
 }
 
@@ -726,11 +759,11 @@ function setImageFloat(float) {
 
 function removeCurrentImage() {
   const tiptapEditor = editor.value;
-  if (!tiptapEditor || !tiptapEditor.isActive("image")) {
+  if (!tiptapEditor || currentImagePos.value === null) {
     return;
   }
 
-  tiptapEditor.chain().focus().deleteSelection().run();
+  tiptapEditor.chain().focus().setNodeSelection(currentImagePos.value).deleteSelection().run();
   syncImageEditorState(tiptapEditor);
 }
 
