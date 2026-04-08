@@ -20,9 +20,13 @@
 
 .editor-doc-shell {
   border: 1px solid var(--editor-preview-border);
-  border-radius: 12px;
-  padding: 16px;
-  background: linear-gradient(180deg, #ffffff, #f8fafc);
+  border-radius: 18px;
+  padding: 18px;
+  background:
+    radial-gradient(circle at top right, rgba(251, 191, 36, 0.12), transparent 22%),
+    radial-gradient(circle at top left, rgba(14, 165, 233, 0.1), transparent 20%),
+    linear-gradient(180deg, #ffffff, #f8fafc);
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.08);
 }
 
 .editor-controls {
@@ -46,6 +50,51 @@
   padding: 6px 10px;
 }
 
+.editor-note {
+  margin: 0 0 12px;
+  font-size: 13px;
+  color: #475569;
+}
+
+.pane-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.eyebrow {
+  margin: 0 0 4px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #c2410c;
+}
+
+.pane-header h3 {
+  margin: 0;
+}
+
+.pane-meta,
+.content-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pane-meta span,
+.content-stats span {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 12px;
+  color: #475569;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
 .editor-workspace {
   display: grid;
   grid-template-columns: minmax(0, 1.8fr) minmax(320px, 1fr);
@@ -55,15 +104,61 @@
 .editor-pane,
 .preview-pane {
   border: 1px solid var(--editor-preview-border);
-  border-radius: 10px;
-  padding: 12px;
+  border-radius: 14px;
+  padding: 14px;
   background: #fff;
 }
 
 .editor-pane h3,
 .preview-pane h3 {
   margin-top: 0;
-  margin-bottom: 10px;
+  margin-bottom: 0;
+}
+
+.pane-header {
+  margin-bottom: 12px;
+}
+
+.template-spotlight {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 14px;
+  padding: 14px;
+  border-radius: 14px;
+  background:
+    linear-gradient(135deg, rgba(255, 237, 213, 0.9), rgba(255, 251, 235, 0.95)),
+    #fffaf2;
+  border: 1px solid #fed7aa;
+}
+
+.template-spotlight-copy strong {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 16px;
+  color: #7c2d12;
+}
+
+.template-spotlight-copy p {
+  margin: 0;
+  color: #9a3412;
+  line-height: 1.6;
+}
+
+.template-spotlight-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.template-spotlight-tags span {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 12px;
+  color: #7c2d12;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(251, 146, 60, 0.22);
 }
 
 .preview-header {
@@ -98,10 +193,14 @@
   color: #1d4ed8;
 }
 
+.content-stats {
+  margin-bottom: 10px;
+}
+
 .editor-output,
 .rendered-output {
-  min-height: 460px;
-  max-height: 460px;
+  min-height: 500px;
+  max-height: 500px;
   overflow: auto;
   border-radius: 8px;
   border: 1px solid var(--editor-preview-border);
@@ -133,6 +232,64 @@
   color: #374151;
 }
 
+.rendered-output table {
+  width: 100%;
+  margin-bottom: 14px;
+  border-collapse: collapse;
+}
+
+.rendered-output th,
+.rendered-output td {
+  border: 1px solid #dbe3ee;
+  padding: 10px 12px;
+  text-align: left;
+}
+
+.rendered-output th {
+  background: #f8fafc;
+}
+
+.rendered-output ul[data-type="taskList"] {
+  list-style: none;
+  padding-left: 0;
+}
+
+.rendered-output ul[data-type="taskList"] li {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  min-height: 28px;
+  margin-bottom: 10px;
+}
+
+.rendered-output ul[data-type="taskList"] li > label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 28px;
+  flex: 0 0 auto;
+}
+
+.rendered-output ul[data-type="taskList"] li > label input {
+  margin: 0;
+}
+
+.rendered-output ul[data-type="taskList"] li > div {
+  flex: 1;
+}
+
+.rendered-output ul[data-type="taskList"] li > div > p:last-child {
+  margin-bottom: 0;
+}
+
+.rendered-output pre {
+  padding: 12px;
+  border-radius: 10px;
+  background: #0f172a;
+  color: #e2e8f0;
+  overflow: auto;
+}
+
 .rendered-output img {
   max-width: 100%;
   border-radius: 6px;
@@ -147,5 +304,13 @@
   .rendered-output {
     min-height: 300px;
     max-height: 360px;
+  }
+}
+
+@media (max-width: 760px) {
+  .pane-header,
+  .preview-header {
+    flex-direction: column;
+    align-items: stretch;
   }
 }

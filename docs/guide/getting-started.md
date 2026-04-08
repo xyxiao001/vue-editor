@@ -26,7 +26,7 @@ import { VueEditor } from "vue-editor-prose-kit";
 
 ```vue
 <template>
-  <VueEditor v-model="content" />
+  <VueEditor v-model="content" toolbar-theme="light" />
 </template>
 
 <script setup>
